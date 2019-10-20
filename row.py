@@ -53,8 +53,6 @@ def workout(power_meter, myWorkout, myLog):
     print("W= "+str(myWatts)+" RPM= "+str(mySpm)+"\n")
 
     power_meter.update(zwiftWatts, zwiftRpm)
-    # used this before I added back the rpm portion of the command
-    #power_meter.update(zwiftWatts)
     
     zwiftDist=monitor['distance']
     zwiftPace=monitor['pace']
@@ -93,22 +91,16 @@ myLog = open(myLogName,"w")
 stick = driver.USB2Driver(None, log=LOG, debug=DEBUG)
 antnode = node.Node(stick)
 
-myLog.write("Starting ANT node \n")
-myLog.flush()
 antnode.start()
 key = node.NetworkKey('N:ANT+', NETKEY)
 antnode.setNetworkKey(0, key)
 
-myLog.write("Starting power meter with ANT+ ID " + repr(POWER_SENSOR_ID) + "\n")
-myLog.flush()
 power_meter = PowerMeterTx(antnode, POWER_SENSOR_ID)
 power_meter.open()
 myLog.write("STARTED power meter with ANT+ ID " + repr(POWER_SENSOR_ID) + "\n")
 myLog.flush()
 
 
-myLog.write("Starting speed sensor with ANT+ ID " + repr(SPEED_SENSOR_ID) + "\n")
-myLog.flush()
 speed_sensor = SpeedTx(antnode, SPEED_SENSOR_ID)
 speed_sensor.open()
 myLog.write("STARTED speed sensor with ANT+ ID " + repr(SPEED_SENSOR_ID) + "\n")
@@ -117,14 +109,8 @@ myLog.flush()
 while True:
       try:
           # loop for C2 usb
-          myLog.write("About to execute pyrow.find()\n")
-          myLog.flush()
           ergs = list(pyrow.find())
-          myLog.write("Executed pyrow.find()\n")
-          myLog.flush()
           while len(ergs) == 0:
-                myLog.write("loop for C2 usb\n")
-                myLog.flush()
                 dummy_workout(power_meter, myLog)
                 time.sleep(5)
                 ergs = list(pyrow.find())
@@ -136,8 +122,6 @@ while True:
              erg = pyrow.pyrow(ergs[0])
              myWorkout = erg.get_workout()
              while myWorkout['state'] == 0:
-                myLog.write("loop for workout start\n")
-                myLog.flush()
                 dummy_workout(power_meter, myLog)
                 time.sleep(1)
                 myWorkout = erg.get_workout()
