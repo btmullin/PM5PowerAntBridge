@@ -56,7 +56,6 @@ class PowerMeterTx(object):
         payload = chr(0x10)  # standard power-only message
         payload += chr(self.powerData.eventCount)
         payload += chr(0xFF)  # Pedal power not used
-        #payload += chr(0xFF)  # Cadence not used
         payload += chr(rpm)
         payload += chr(self.powerData.cumulativePower & 0xff)
         payload += chr(self.powerData.cumulativePower >> 8)
